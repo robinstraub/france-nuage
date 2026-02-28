@@ -4,6 +4,11 @@ controlplane/target/
 # Node
 node_modules/
 dist/
+*.tsbuildinfo
+
+# Test reports
+playwright-report/
+test-results/
 
 # Environment
 .env
