@@ -100,6 +100,11 @@ services:
     volumes:
       - ./console:/app
       - /app/node_modules
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5173"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
     depends_on:
       - controlplane
     labels:

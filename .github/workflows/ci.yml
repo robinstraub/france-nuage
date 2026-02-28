@@ -75,14 +75,14 @@ jobs:
         run: docker compose up -d --build --wait console controlplane keycloak postgres spicedb spicedb-migrate traefik
 
       - name: Run E2E tests
-        run: docker compose run --rm system-tests
+        run: docker compose run -v ${{ github.workspace }}/playwright-report:/app/playwright-report system-tests
 
       - name: Upload test report
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: playwright-report
-          path: system-tests/playwright-report/
+          path: playwright-report/
 
       - name: Stop services
         if: always()
