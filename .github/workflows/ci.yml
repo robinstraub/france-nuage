@@ -43,7 +43,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Buf lint
-        run: docker compose run --rm --no-deps controlplane buf lint protocol/
+        run: docker compose run --rm --no-deps --workdir /app controlplane buf lint protocol/
 
   console-lint:
     name: console / lint
