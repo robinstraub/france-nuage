@@ -1,0 +1,24 @@
+# Rust
+controlplane/target/
+
+# Node
+node_modules/
+dist/
+*.tsbuildinfo
+
+# Test reports
+playwright-report/
+test-results/
+
+# Environment
+.env
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db

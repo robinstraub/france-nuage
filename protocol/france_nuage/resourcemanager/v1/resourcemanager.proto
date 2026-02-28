@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package france_nuage.resourcemanager.v1;
+
+message Organization {
+  string id = 1;
+  string name = 2;
+}
+
+message ListOrganizationsRequest {}
+
+message ListOrganizationsResponse {
+  repeated Organization organizations = 1;
+}
+
+service ResourceManagerService {
+  rpc ListOrganizations(ListOrganizationsRequest) returns (ListOrganizationsResponse);
+}

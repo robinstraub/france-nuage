@@ -1,0 +1,10 @@
+[package]
+name = "infra-spicedb"
+version = "0.1.0"
+edition = { workspace = true }
+
+[dependencies]
+controlplane-core = { path = "../core" }
+domain = { path = "../domain" }
+tonic = { workspace = true }
+prost = { workspace = true }

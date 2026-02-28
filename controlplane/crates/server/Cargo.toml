@@ -1,0 +1,20 @@
+[package]
+name = "server"
+version = "0.1.0"
+edition = { workspace = true }
+
+[dependencies]
+controlplane-core = { path = "../core" }
+domain = { path = "../domain" }
+infra-db = { path = "../infra-db" }
+infra-stripe = { path = "../infra-stripe" }
+infra-kube = { path = "../infra-kube" }
+infra-spicedb = { path = "../infra-spicedb" }
+tokio = { workspace = true }
+tonic = { workspace = true }
+prost = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+
+[build-dependencies]
+tonic-prost-build = "0.14"

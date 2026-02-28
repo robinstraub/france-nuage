@@ -1,0 +1,148 @@
+services:
+  postgres:
+    image: postgres:16
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-francenuage}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-francenuage}
+      POSTGRES_DB: ${POSTGRES_DB:-controlplane}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-francenuage}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:latest
+    command: start-dev --import-realm
+    ports:
+      - "8080:8080"
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-controlplane}
+      KC_DB_USERNAME: ${POSTGRES_USER:-francenuage}
+      KC_DB_PASSWORD: ${POSTGRES_PASSWORD:-francenuage}
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN:-admin}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
+    volumes:
+      - ./keycloak-realm.json:/opt/keycloak/data/import/france-nuage-realm.json:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  spicedb-migrate:
+    image: authzed/spicedb:latest
+    command: migrate head
+    environment:
+      SPICEDB_DATASTORE_ENGINE: postgres
+      SPICEDB_DATASTORE_CONN_URI: postgres://${POSTGRES_USER:-francenuage}:${POSTGRES_PASSWORD:-francenuage}@postgres:5432/${POSTGRES_DB:-controlplane}?sslmode=disable
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  spicedb:
+    image: authzed/spicedb:latest
+    command: serve
+    ports:
+      - "50051:50051"
+    environment:
+      SPICEDB_GRPC_PRESHARED_KEY: ${SPICEDB_PRESHARED_KEY:-francenuage}
+      SPICEDB_DATASTORE_ENGINE: postgres
+      SPICEDB_DATASTORE_CONN_URI: postgres://${POSTGRES_USER:-francenuage}:${POSTGRES_PASSWORD:-francenuage}@postgres:5432/${POSTGRES_DB:-controlplane}?sslmode=disable
+    depends_on:
+      spicedb-migrate:
+        condition: service_completed_successfully
+
+  controlplane:
+    build:
+      context: .
+      dockerfile: controlplane/Dockerfile
+      target: development
+    ports:
+      - "50052:50052"
+    environment:
+      DATABASE_URL: postgres://${POSTGRES_USER:-francenuage}:${POSTGRES_PASSWORD:-francenuage}@postgres:5432/${POSTGRES_DB:-controlplane}
+      SPICEDB_URL: http://spicedb:50051
+      SPICEDB_PRESHARED_KEY: ${SPICEDB_PRESHARED_KEY:-francenuage}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-sk_test_placeholder}
+      OIDC_ISSUER_URL: http://keycloak:8080/realms/france-nuage
+      RUST_LOG: ${RUST_LOG:-info}
+      RUST_BACKTRACE: 1
+      SQLX_OFFLINE: "true"
+    volumes:
+      - ./controlplane:/app/controlplane
+      - ./protocol:/app/protocol
+    depends_on:
+      postgres:
+        condition: service_healthy
+      spicedb:
+        condition: service_started
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.controlplane.rule=Host(`controlplane.localhost`)
+      - traefik.http.services.controlplane.loadbalancer.server.port=50052
+      - traefik.http.services.controlplane.loadbalancer.server.scheme=h2c
+
+  console:
+    build:
+      context: .
+      dockerfile: console/Dockerfile
+      target: development
+    ports:
+      - "5173:5173"
+    environment:
+      VITE_API_BASE_URL: http://controlplane.localhost
+      VITE_OIDC_AUTHORITY: http://localhost:8080/realms/france-nuage
+      VITE_OIDC_CLIENT_ID: console
+    volumes:
+      - ./console:/app
+      - /app/node_modules
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5173"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+    depends_on:
+      - controlplane
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.console.rule=Host(`console.localhost`)
+      - traefik.http.services.console.loadbalancer.server.port=5173
+
+  traefik:
+    image: traefik:v3
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8180:8080"
+    command:
+      - --api.dashboard=true
+      - --api.insecure=true
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+  system-tests:
+    build:
+      context: .
+      dockerfile: system-tests/Dockerfile
+    environment:
+      CONSOLE_URL: http://console:5173
+      KEYCLOAK_URL: http://keycloak:8080
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN:-admin}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
+    depends_on:
+      - console
+      - controlplane
+      - keycloak
+    profiles:
+      - test
+
+volumes:
+  postgres-data:

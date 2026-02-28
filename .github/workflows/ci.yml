@@ -1,0 +1,89 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  controlplane-build:
+    name: controlplane / build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build
+        run: docker compose run --rm --no-deps controlplane cargo build --workspace
+
+  controlplane-lint:
+    name: controlplane / lint
+    runs-on: ubuntu-latest
+    needs: controlplane-build
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Clippy
+        run: docker compose run --rm --no-deps controlplane cargo clippy --workspace -- -D warnings
+
+  controlplane-test:
+    name: controlplane / test
+    runs-on: ubuntu-latest
+    needs: controlplane-build
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Test with coverage
+        run: docker compose run --rm --no-deps controlplane cargo llvm-cov --workspace --ignore-filename-regex 'main\.rs' --fail-under-lines 100
+
+  protocol-lint:
+    name: protocol / lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Buf lint
+        run: docker compose run --rm --no-deps --workdir /app controlplane buf lint protocol/
+
+  console-lint:
+    name: console / lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Lint
+        run: docker compose run --rm --no-deps console npm run lint
+
+  console-build:
+    name: console / build
+    runs-on: ubuntu-latest
+    needs: console-lint
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build
+        run: docker compose run --rm --no-deps console npm run build
+
+  system-tests:
+    name: system-tests / e2e
+    runs-on: ubuntu-latest
+    needs: [controlplane-build, console-build]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Start services
+        run: docker compose up -d --build --wait console controlplane keycloak postgres spicedb spicedb-migrate traefik
+
+      - name: Run E2E tests
+        run: docker compose run -v ${{ github.workspace }}/playwright-report:/app/playwright-report system-tests
+
+      - name: Upload test report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+
+      - name: Stop services
+        if: always()
+        run: docker compose down
