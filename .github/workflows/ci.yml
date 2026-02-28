@@ -6,9 +6,6 @@ on:
   pull_request:
     branches: [master]
 
-env:
-  CARGO_TERM_COLOR: always
-
 jobs:
   controlplane-build:
     name: controlplane / build
@@ -16,19 +13,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: dtolnay/rust-toolchain@stable
-
-      - uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            controlplane/target
-          key: ${{ runner.os }}-cargo-${{ hashFiles('controlplane/**/Cargo.lock') }}
-          restore-keys: ${{ runner.os }}-cargo-
-
       - name: Build
-        run: cargo build --workspace --manifest-path controlplane/Cargo.toml
+        run: docker compose run --rm --no-deps controlplane cargo build --workspace
 
   controlplane-lint:
     name: controlplane / lint
@@ -37,21 +23,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: dtolnay/rust-toolchain@stable
-        with:
-          components: clippy
-
-      - uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            controlplane/target
-          key: ${{ runner.os }}-cargo-${{ hashFiles('controlplane/**/Cargo.lock') }}
-          restore-keys: ${{ runner.os }}-cargo-
-
       - name: Clippy
-        run: cargo clippy --workspace --manifest-path controlplane/Cargo.toml -- -D warnings
+        run: docker compose run --rm --no-deps controlplane cargo clippy --workspace -- -D warnings
 
   controlplane-test:
     name: controlplane / test
@@ -60,23 +33,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: dtolnay/rust-toolchain@stable
-        with:
-          components: llvm-tools-preview
-
-      - uses: taiki-e/install-action@cargo-llvm-cov
-
-      - uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            controlplane/target
-          key: ${{ runner.os }}-cargo-${{ hashFiles('controlplane/**/Cargo.lock') }}
-          restore-keys: ${{ runner.os }}-cargo-
-
       - name: Test with coverage
-        run: cargo llvm-cov --workspace --manifest-path controlplane/Cargo.toml --ignore-filename-regex 'main\.rs' --fail-under-lines 100
+        run: docker compose run --rm --no-deps controlplane cargo llvm-cov --workspace --ignore-filename-regex 'main\.rs' --fail-under-lines 100
 
   protocol-lint:
     name: protocol / lint
@@ -84,10 +42,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: bufbuild/buf-setup-action@v1
-
       - name: Buf lint
-        run: buf lint protocol/
+        run: docker compose run --rm --no-deps controlplane buf lint protocol/
 
   console-lint:
     name: console / lint
@@ -95,19 +51,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-          cache-dependency-path: console/package-lock.json
-
-      - name: Install
-        run: npm ci
-        working-directory: console
-
       - name: Lint
-        run: npm run lint
-        working-directory: console
+        run: docker compose run --rm --no-deps console npm run lint
 
   console-build:
     name: console / build
@@ -116,19 +61,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-          cache-dependency-path: console/package-lock.json
-
-      - name: Install
-        run: npm ci
-        working-directory: console
-
       - name: Build
-        run: npm run build
-        working-directory: console
+        run: docker compose run --rm --no-deps console npm run build
 
   system-tests:
     name: system-tests / e2e
@@ -140,29 +74,8 @@ jobs:
       - name: Start services
         run: docker compose up -d --build --wait console controlplane keycloak postgres spicedb spicedb-migrate traefik
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-          cache-dependency-path: system-tests/package-lock.json
-
-      - name: Install node-sdk
-        run: npm ci && npm run build
-        working-directory: node-sdk
-
-      - name: Install system-tests
-        run: npm ci
-        working-directory: system-tests
-
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium
-        working-directory: system-tests
-
       - name: Run E2E tests
-        run: npm test
-        working-directory: system-tests
-        env:
-          CONSOLE_URL: http://localhost:5173
+        run: docker compose run --rm system-tests
 
       - name: Upload test report
         uses: actions/upload-artifact@v4
