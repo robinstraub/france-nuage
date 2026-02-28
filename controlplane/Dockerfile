@@ -1,4 +1,4 @@
-FROM rust:1.85 AS base
+FROM rust:1.87 AS base
 
 RUN apt-get update && apt-get install -y protobuf-compiler curl && rm -rf /var/lib/apt/lists/*
 RUN rustup component add clippy llvm-tools-preview
