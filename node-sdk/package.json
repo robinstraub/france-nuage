@@ -1,0 +1,19 @@
+{
+  "name": "@france-nuage/node-sdk",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "codegen": "protoc --ts_out src/generated/rpc --ts_opt long_type_number --proto_path ../protocol ../protocol/france_nuage/resourcemanager/v1/resourcemanager.proto",
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@faker-js/faker": "^10.3.0",
+    "@protobuf-ts/grpcweb-transport": "^2.11.1",
+    "@protobuf-ts/runtime": "^2.11.1"
+  },
+  "devDependencies": {
+    "@protobuf-ts/plugin": "^2.11.1",
+    "typescript": "^5.8.0"
+  }
+}

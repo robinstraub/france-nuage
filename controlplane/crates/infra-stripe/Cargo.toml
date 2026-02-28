@@ -1,0 +1,11 @@
+[package]
+name = "infra-stripe"
+version = "0.1.0"
+edition = { workspace = true }
+
+[dependencies]
+controlplane-core = { path = "../core" }
+domain = { path = "../domain" }
+reqwest = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }

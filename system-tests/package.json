@@ -1,0 +1,15 @@
+{
+  "name": "@france-nuage/system-tests",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "test": "playwright test",
+    "test:ui": "playwright test --reporter=html"
+  },
+  "dependencies": {
+    "@france-nuage/node-sdk": "file:../node-sdk"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.52.0"
+  }
+}

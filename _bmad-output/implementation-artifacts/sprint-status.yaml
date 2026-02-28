@@ -41,8 +41,8 @@ story_location: "_bmad-output/implementation-artifacts"
 
 development_status:
   # Epic 1 : Authentification & Espace de travail
-  epic-1: backlog
-  1-1-initialisation-du-monorepo-et-environnement-de-developpement: backlog
+  epic-1: in-progress
+  1-1-initialisation-du-monorepo-et-environnement-de-developpement: review
   1-2-infrastructure-de-tests-e2e-et-cluster-kubernetes-de-test: backlog
   1-3-shell-de-la-console-et-authentification-frontend: backlog
   1-4-middleware-dauthentification-et-creation-utilisateur: backlog

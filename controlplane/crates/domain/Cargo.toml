@@ -1,0 +1,9 @@
+[package]
+name = "domain"
+version = "0.1.0"
+edition = { workspace = true }
+
+[dependencies]
+controlplane-core = { path = "../core" }
+uuid = { workspace = true }
+chrono = { workspace = true }

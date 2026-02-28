@@ -1,0 +1,11 @@
+[package]
+name = "infra-db"
+version = "0.1.0"
+edition = { workspace = true }
+
+[dependencies]
+controlplane-core = { path = "../core" }
+domain = { path = "../domain" }
+sqlx = { workspace = true }
+uuid = { workspace = true }
+chrono = { workspace = true }
