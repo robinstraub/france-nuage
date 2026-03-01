@@ -9,7 +9,10 @@ export function CallbackPage() {
     userManager
       .signinCallback()
       .then(() => navigate("/", { replace: true }))
-      .catch(() => navigate("/", { replace: true }));
+      .catch((error) => {
+        console.error("OIDC callback failed:", error);
+        navigate("/", { replace: true });
+      });
   }, [navigate]);
 
   return null;

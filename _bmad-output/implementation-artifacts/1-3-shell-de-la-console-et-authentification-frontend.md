@@ -17,7 +17,7 @@ so that I can access my cloud workspace securely.
 2. **Given** I am on the Keycloak login page
    **When** I sign in with valid credentials (or register a new account)
    **Then** I am redirected back to the console
-   **And** the OIDC token is stored in memory via oidc-client-ts
+   **And** the OIDC token is stored in sessionStorage via oidc-client-ts
 
 3. **Given** I am authenticated
    **When** the console loads
@@ -141,7 +141,7 @@ so that I can access my cloud workspace securely.
 - `/callback` est une route publique (pas protegee)
 
 **Routes MVP :**
-```
+```text
 /callback          → CallbackPage (publique)
 /                  → PageGuard → AppLayout → HomePage
 /catalog           → PageGuard → AppLayout → CatalogPage (future)

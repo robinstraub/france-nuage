@@ -53,7 +53,7 @@ export function AppSidebar() {
                   justifyContent="flex-start"
                   fontWeight={isActive ? "medium" : "normal"}
                   bg={isActive ? "colorPalette.subtle" : undefined}
-                  borderLeftWidth={isActive ? "3px" : "3px"}
+                  borderLeftWidth="3px"
                   borderLeftColor={isActive ? "colorPalette.fg" : "transparent"}
                   borderRadius="md"
                   aria-current={isActive ? "page" : undefined}

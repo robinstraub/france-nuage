@@ -7,16 +7,23 @@ export function PageGuard() {
   const [user, setUser] = useState<User | null | undefined>(undefined);
 
   useEffect(() => {
-    userManager.getUser().then((u) => {
-      if (u && !u.expired) {
-        setUser(u);
-      } else {
-        userManager.signinRedirect();
-      }
-    });
+    userManager
+      .getUser()
+      .then((u) => {
+        if (u && !u.expired) {
+          setUser(u);
+        } else {
+          return userManager.signinRedirect();
+        }
+      })
+      .catch(() => {
+        userManager.signinRedirect().catch(() => {
+          setUser(null);
+        });
+      });
   }, []);
 
-  if (user === undefined) {
+  if (!user) {
     return null;
   }
 

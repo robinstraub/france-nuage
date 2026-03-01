@@ -5,6 +5,9 @@ test.describe("Story 1.3 : Shell de la console et authentification frontend", ()
 		pages,
 	}) => {
 		await pages.home.goto();
+		// Le shell ne doit pas être visible : le PageGuard bloque le rendu
+		// et tente une redirection OIDC (non vérifiable en Docker car
+		// localhost:8080 n'est pas accessible depuis le container)
 		await expect(pages.home.header).not.toBeVisible();
 	});
 
@@ -27,7 +30,7 @@ test.describe("Story 1.3 : Shell de la console et authentification frontend", ()
 			pages,
 		}) => {
 			await pages.home.goto();
-			await expect(pages.home.userName).toBeVisible();
+			await expect(pages.home.userName("Test User")).toBeVisible();
 		});
 
 		test("le bouton de déconnexion est visible", async ({ pages }) => {

@@ -10,8 +10,8 @@ export class HomePage extends BasePage {
 		return this.page.locator("nav[aria-label='Navigation principale']");
 	}
 
-	get userName(): Locator {
-		return this.header.locator("text=Test User");
+	userName(expectedName: string): Locator {
+		return this.header.getByText(expectedName, { exact: true });
 	}
 
 	get logoutButton(): Locator {

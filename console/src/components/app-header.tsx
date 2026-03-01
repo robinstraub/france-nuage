@@ -15,7 +15,10 @@ export function AppHeader({ user, onToggleSidebar }: AppHeaderProps) {
     "";
 
   const handleLogout = () => {
-    userManager.signoutRedirect();
+    userManager.signoutRedirect().catch(() => {
+      sessionStorage.clear();
+      window.location.href = "/";
+    });
   };
 
   return (
