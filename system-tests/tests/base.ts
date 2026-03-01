@@ -69,7 +69,7 @@ type TestFixtures = {
 
 export const test = base.extend<TestFixtures, WorkerFixtures>({
 	keycloak: [
-		async (_, use) => {
+		async ({}, use) => {
 			await use(new KeycloakApi(KEYCLOAK_URL, "france-nuage"));
 		},
 		{ scope: "worker" },
