@@ -71,11 +71,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Start services
-        run: docker compose up -d --build --wait console controlplane keycloak postgres spicedb spicedb-migrate traefik
-
       - name: Run E2E tests
-        run: docker compose run -v ${{ github.workspace }}/playwright-report:/app/playwright-report system-tests
+        run: docker compose run --build -v ${{ github.workspace }}/playwright-report:/app/playwright-report system-tests
 
       - name: Upload test report
         uses: actions/upload-artifact@v4

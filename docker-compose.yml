@@ -17,7 +17,7 @@ services:
 
   keycloak:
     image: quay.io/keycloak/keycloak:latest
-    command: start-dev --import-realm
+    command: start-dev --import-realm --health-enabled=true
     ports:
       - "8080:8080"
     environment:
@@ -29,6 +29,11 @@ services:
       KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
     volumes:
       - ./keycloak-realm.json:/opt/keycloak/data/import/france-nuage-realm.json:ro
+    healthcheck:
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/localhost/8080"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
     depends_on:
       postgres:
         condition: service_healthy
@@ -106,7 +111,8 @@ services:
       timeout: 5s
       retries: 30
     depends_on:
-      - controlplane
+      controlplane:
+        condition: service_started
     labels:
       - traefik.enable=true
       - traefik.http.routers.console.rule=Host(`console.localhost`)
@@ -128,6 +134,23 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
 
+  k3s:
+    image: rancher/k3s:v1.31.4-k3s1
+    command: server --disable traefik --disable servicelb --tls-san k3s --write-kubeconfig-mode 644
+    privileged: true
+    tmpfs:
+      - /run
+      - /var/run
+    volumes:
+      - k3s-kubeconfig:/etc/rancher/k3s
+    healthcheck:
+      test: ["CMD", "k3s", "kubectl", "get", "nodes"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+    profiles:
+      - k8s
+
   system-tests:
     build:
       context: .
@@ -138,11 +161,13 @@ services:
       KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN:-admin}
       KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
     depends_on:
-      - console
-      - controlplane
-      - keycloak
+      console:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
     profiles:
       - test
 
 volumes:
   postgres-data:
+  k3s-kubeconfig:
