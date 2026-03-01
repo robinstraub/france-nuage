@@ -43,7 +43,7 @@ development_status:
   # Epic 1 : Authentification & Espace de travail
   epic-1: in-progress
   1-1-initialisation-du-monorepo-et-environnement-de-developpement: review
-  1-2-infrastructure-de-tests-e2e-et-cluster-kubernetes-de-test: backlog
+  1-2-infrastructure-de-tests-e2e-et-cluster-kubernetes-de-test: review
   1-3-shell-de-la-console-et-authentification-frontend: backlog
   1-4-middleware-dauthentification-et-creation-utilisateur: backlog
   1-5-creation-et-consultation-des-organisations: backlog

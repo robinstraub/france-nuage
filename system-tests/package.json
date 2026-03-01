@@ -10,6 +10,8 @@
     "@france-nuage/node-sdk": "file:../node-sdk"
   },
   "devDependencies": {
-    "@playwright/test": "^1.52.0"
+    "@axe-core/playwright": "^4.11.1",
+    "@playwright/test": "^1.52.0",
+    "@types/node": "^22.0.0"
   }
 }

@@ -1,0 +1,47 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+language: "en-US"
+early_access: true
+enable_free_tier: true
+auto_resolve_threads: true
+tone_instructions: "Expert reviewer for Rust, React, TypeScript, PostgreSQL, gRPC, Kubernetes. Keep feedback concise; elaborate only when requested."
+reviews:
+  profile: "chill"
+  request_changes_workflow: false
+  high_level_summary: true
+  high_level_summary_in_walkthrough: true
+  poem: false
+  review_status: true
+  collapse_walkthrough: false
+  auto_review:
+    enabled: true
+    drafts: true
+    base_branches: ["master"]
+  path_instructions:
+    - path: "console/**"
+      instructions: |
+        Review the following frontend console code. Ensure that:
+        - Best practices for React and Chakra UI are followed
+        - All error execution paths are handled and either recovered or displayed to the user
+        - Avoid magic numbers or magic strings
+        - TypeScript types are always specified (no any)
+        - Biome is the formatter/linter (not eslint/prettier)
+    - path: "controlplane/**"
+      instructions: |
+        Review the following Rust gRPC control-plane code. Ensure that:
+        - Hexagonal architecture is respected (domain has zero infra dependencies)
+        - Best Rust practices are respected
+        - Best gRPC and protobuf practices are respected
+        - Every fix comes with a regression test
+        - 100% code coverage is maintained
+    - path: "system-tests/**"
+      instructions: |
+        Review the following Playwright end-to-end test. Ensure that:
+        - Avoid using wait, pause, or sleep methods
+        - Use Page Object Model pattern (pages/ directory)
+        - All shared code is provided via Playwright fixtures in base.ts (no helpers/ or utils/ directories)
+        - Perform logins via API (not UI)
+        - Avoid using it.only or test.only
+        - Test descriptions are in French
+        - Code (variables, functions, classes) is in English
+chat:
+  auto_reply: true
