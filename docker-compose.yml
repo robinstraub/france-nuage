@@ -160,6 +160,8 @@ services:
       KEYCLOAK_URL: http://keycloak:8080
       KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN:-admin}
       KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
+      CONSOLE_OIDC_AUTHORITY: http://localhost:8080/realms/france-nuage
+      CONSOLE_OIDC_CLIENT_ID: console
     depends_on:
       console:
         condition: service_healthy

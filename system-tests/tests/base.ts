@@ -4,7 +4,11 @@ import { LoginPage } from "./pages/login.page";
 
 const KEYCLOAK_URL = process.env.KEYCLOAK_URL || "http://localhost:8080";
 const OIDC_CLIENT_ID = "e2e-tests";
-const OIDC_AUTHORITY = `${KEYCLOAK_URL}/realms/france-nuage`;
+const CONSOLE_OIDC_CLIENT_ID =
+	process.env.CONSOLE_OIDC_CLIENT_ID || "console";
+const CONSOLE_OIDC_AUTHORITY =
+	process.env.CONSOLE_OIDC_AUTHORITY ||
+	"http://localhost:8080/realms/france-nuage";
 
 interface TokenResponse {
 	access_token: string;
@@ -90,7 +94,7 @@ export const test = base.extend<TestFixtures, WorkerFixtures>({
 			};
 
 			const tokens = await keycloak.getToken(username, password);
-			const storageKey = `oidc.user:${OIDC_AUTHORITY}:${OIDC_CLIENT_ID}`;
+			const storageKey = `oidc.user:${CONSOLE_OIDC_AUTHORITY}:${CONSOLE_OIDC_CLIENT_ID}`;
 
 			const idTokenPayload = JSON.parse(
 				Buffer.from(tokens.id_token.split(".")[1], "base64url").toString(),
