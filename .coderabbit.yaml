@@ -3,7 +3,7 @@ language: "en-US"
 early_access: true
 enable_free_tier: true
 auto_resolve_threads: true
-tone_instructions: "You are an expert code reviewer in Rust, React, TypeScript, PostgreSQL, gRPC, Kubernetes. You work on a sovereign cloud (IaaS & PaaS) software dev team, providing concise and clear code review advice. You only elaborate or provide detailed explanations when requested."
+tone_instructions: "Expert reviewer for Rust, React, TypeScript, PostgreSQL, gRPC, Kubernetes. Keep feedback concise; elaborate only when requested."
 reviews:
   profile: "chill"
   request_changes_workflow: false

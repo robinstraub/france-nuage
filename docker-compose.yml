@@ -30,7 +30,7 @@ services:
     volumes:
       - ./keycloak-realm.json:/opt/keycloak/data/import/france-nuage-realm.json:ro
     healthcheck:
-      test: ["CMD-SHELL", "exec 3<>/dev/tcp/localhost/8080"]
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8080/health/ready > /dev/null"]
       interval: 5s
       timeout: 5s
       retries: 30
