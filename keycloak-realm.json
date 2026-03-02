@@ -14,7 +14,7 @@
       "publicClient": true,
       "standardFlowEnabled": true,
       "directAccessGrantsEnabled": false,
-      "redirectUris": ["http://localhost:*"],
+      "redirectUris": ["http://localhost:*", "https://console.localhost/*"],
       "webOrigins": ["+"],
       "protocol": "openid-connect",
       "attributes": {
@@ -33,7 +33,7 @@
       "publicClient": true,
       "standardFlowEnabled": true,
       "directAccessGrantsEnabled": true,
-      "redirectUris": ["http://localhost:*"],
+      "redirectUris": ["http://localhost:*", "https://console.localhost/*"],
       "webOrigins": ["+"],
       "protocol": "openid-connect"
     }

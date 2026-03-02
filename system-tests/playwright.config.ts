@@ -8,7 +8,7 @@ export default defineConfig({
   workers: 1,
   reporter: "html",
   use: {
-    baseURL: process.env.CONSOLE_URL || "http://localhost:5173",
+    baseURL: process.env.CONSOLE_URL || "https://console.localhost",
     ignoreHTTPSErrors: true,
     screenshot: "only-on-failure",
     video: "on",

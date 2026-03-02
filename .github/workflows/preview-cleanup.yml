@@ -1,0 +1,29 @@
+name: Preview cleanup
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  cleanup:
+    name: cleanup / preview
+    runs-on: ubuntu-latest
+    concurrency:
+      group: gh-pages-deploy
+      cancel-in-progress: false
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+
+      - name: Remove preview files
+        run: |
+          if [ -d "pr/${{ github.event.pull_request.number }}" ]; then
+            git rm -rf "pr/${{ github.event.pull_request.number }}"
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git commit -m "chore: remove preview for PR #${{ github.event.pull_request.number }}"
+            git push
+          fi
