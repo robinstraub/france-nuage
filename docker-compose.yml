@@ -87,12 +87,9 @@ services:
       RUST_LOG: ${RUST_LOG:-info}
       RUST_BACKTRACE: 1
       SQLX_OFFLINE: "true"
-      CURL_CA_BUNDLE: /etc/ssl/certs/france-nuage-dev-ca.pem
-      SSL_CERT_FILE: /etc/ssl/certs/france-nuage-dev-ca.pem
     volumes:
       - ./controlplane:/app/controlplane
       - ./protocol:/app/protocol
-      - ./certs/ca.pem:/etc/ssl/certs/france-nuage-dev-ca.pem:ro
     depends_on:
       postgres:
         condition: service_healthy
@@ -118,11 +115,9 @@ services:
       VITE_OIDC_AUTHORITY: https://keycloak.localhost/realms/france-nuage
       VITE_OIDC_CLIENT_ID: console
       VITE_OIDC_REDIRECT_URI: https://console.localhost/callback
-      NODE_EXTRA_CA_CERTS: /etc/ssl/certs/france-nuage-dev-ca.pem
     volumes:
       - ./console:/app
       - /app/node_modules
-      - ./certs/ca.pem:/etc/ssl/certs/france-nuage-dev-ca.pem:ro
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5173"]
       interval: 5s
