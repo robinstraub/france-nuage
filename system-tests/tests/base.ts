@@ -2,13 +2,13 @@ import { test as base } from "@playwright/test";
 import { HomePage } from "./pages/home.page";
 import { LoginPage } from "./pages/login.page";
 
-const KEYCLOAK_URL = process.env.KEYCLOAK_URL || "http://localhost:8080";
+const KEYCLOAK_URL = process.env.KEYCLOAK_URL || "https://keycloak.localhost";
 const OIDC_CLIENT_ID = "e2e-tests";
 const CONSOLE_OIDC_CLIENT_ID =
 	process.env.CONSOLE_OIDC_CLIENT_ID || "console";
 const CONSOLE_OIDC_AUTHORITY =
 	process.env.CONSOLE_OIDC_AUTHORITY ||
-	"http://localhost:8080/realms/france-nuage";
+	"https://keycloak.localhost/realms/france-nuage";
 
 interface TokenResponse {
 	access_token: string;

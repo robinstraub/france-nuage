@@ -71,6 +71,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Generate TLS certificates
+        run: ./generate-certs.sh
+
       - name: Run E2E tests
         run: docker compose run --build -v ${{ github.workspace }}/playwright-report:/app/playwright-report system-tests
 

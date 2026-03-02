@@ -18,8 +18,8 @@ services:
   keycloak:
     image: quay.io/keycloak/keycloak:latest
     command: start-dev --import-realm --health-enabled=true
-    ports:
-      - "8080:8080"
+    expose:
+      - "8080"
     environment:
       KC_DB: postgres
       KC_DB_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-controlplane}
@@ -27,6 +27,10 @@ services:
       KC_DB_PASSWORD: ${POSTGRES_PASSWORD:-francenuage}
       KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN:-admin}
       KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
+      KC_HOSTNAME: keycloak.localhost
+      KC_HOSTNAME_STRICT: "false"
+      KC_HTTP_ENABLED: "true"
+      KC_PROXY_HEADERS: xforwarded
     volumes:
       - ./keycloak-realm.json:/opt/keycloak/data/import/france-nuage-realm.json:ro
     healthcheck:
@@ -37,6 +41,12 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.keycloak.rule=Host(`keycloak.localhost`)
+      - traefik.http.routers.keycloak.entrypoints=websecure
+      - traefik.http.routers.keycloak.tls=true
+      - traefik.http.services.keycloak.loadbalancer.server.port=8080
 
   spicedb-migrate:
     image: authzed/spicedb:latest
@@ -66,20 +76,23 @@ services:
       context: .
       dockerfile: controlplane/Dockerfile
       target: development
-    ports:
-      - "50052:50052"
+    expose:
+      - "50052"
     environment:
       DATABASE_URL: postgres://${POSTGRES_USER:-francenuage}:${POSTGRES_PASSWORD:-francenuage}@postgres:5432/${POSTGRES_DB:-controlplane}
       SPICEDB_URL: http://spicedb:50051
       SPICEDB_PRESHARED_KEY: ${SPICEDB_PRESHARED_KEY:-francenuage}
       STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-sk_test_placeholder}
-      OIDC_ISSUER_URL: http://keycloak:8080/realms/france-nuage
+      OIDC_ISSUER_URL: https://keycloak.localhost/realms/france-nuage
       RUST_LOG: ${RUST_LOG:-info}
       RUST_BACKTRACE: 1
       SQLX_OFFLINE: "true"
+      CURL_CA_BUNDLE: /etc/ssl/certs/france-nuage-dev-ca.pem
+      SSL_CERT_FILE: /etc/ssl/certs/france-nuage-dev-ca.pem
     volumes:
       - ./controlplane:/app/controlplane
       - ./protocol:/app/protocol
+      - ./certs/ca.pem:/etc/ssl/certs/france-nuage-dev-ca.pem:ro
     depends_on:
       postgres:
         condition: service_healthy
@@ -88,6 +101,8 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.routers.controlplane.rule=Host(`controlplane.localhost`)
+      - traefik.http.routers.controlplane.entrypoints=websecure
+      - traefik.http.routers.controlplane.tls=true
       - traefik.http.services.controlplane.loadbalancer.server.port=50052
       - traefik.http.services.controlplane.loadbalancer.server.scheme=h2c
 
@@ -96,15 +111,18 @@ services:
       context: .
       dockerfile: console/Dockerfile
       target: development
-    ports:
-      - "5173:5173"
+    expose:
+      - "5173"
     environment:
-      VITE_API_BASE_URL: http://controlplane.localhost
-      VITE_OIDC_AUTHORITY: http://localhost:8080/realms/france-nuage
+      VITE_API_BASE_URL: https://controlplane.localhost
+      VITE_OIDC_AUTHORITY: https://keycloak.localhost/realms/france-nuage
       VITE_OIDC_CLIENT_ID: console
+      VITE_OIDC_REDIRECT_URI: https://console.localhost/callback
+      NODE_EXTRA_CA_CERTS: /etc/ssl/certs/france-nuage-dev-ca.pem
     volumes:
       - ./console:/app
       - /app/node_modules
+      - ./certs/ca.pem:/etc/ssl/certs/france-nuage-dev-ca.pem:ro
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5173"]
       interval: 5s
@@ -116,10 +134,18 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.routers.console.rule=Host(`console.localhost`)
+      - traefik.http.routers.console.entrypoints=websecure
+      - traefik.http.routers.console.tls=true
       - traefik.http.services.console.loadbalancer.server.port=5173
 
   traefik:
     image: traefik:v3
+    networks:
+      default:
+        aliases:
+          - console.localhost
+          - keycloak.localhost
+          - controlplane.localhost
     ports:
       - "80:80"
       - "443:443"
@@ -131,8 +157,14 @@ services:
       - --providers.docker.exposedbydefault=false
       - --entrypoints.web.address=:80
       - --entrypoints.websecure.address=:443
+      - --entrypoints.web.http.redirections.entrypoint.to=websecure
+      - --entrypoints.web.http.redirections.entrypoint.scheme=https
+      - --providers.file.directory=/etc/traefik/dynamic
+      - --providers.file.watch=true
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./certs:/etc/traefik/certs:ro
+      - ./traefik:/etc/traefik/dynamic:ro
 
   k3s:
     image: rancher/k3s:v1.31.4-k3s1
@@ -160,7 +192,7 @@ services:
       KEYCLOAK_URL: http://keycloak:8080
       KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN:-admin}
       KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
-      CONSOLE_OIDC_AUTHORITY: http://localhost:8080/realms/france-nuage
+      CONSOLE_OIDC_AUTHORITY: https://keycloak.localhost/realms/france-nuage
       CONSOLE_OIDC_CLIENT_ID: console
     depends_on:
       console:

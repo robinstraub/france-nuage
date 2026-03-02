@@ -10,6 +10,10 @@ dist/
 playwright-report/
 test-results/
 
+# Generated certificates and Traefik config
+certs/
+traefik/
+
 # Environment
 .env
 
