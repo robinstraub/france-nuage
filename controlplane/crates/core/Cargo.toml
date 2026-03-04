@@ -8,3 +8,7 @@ thiserror = { workspace = true }
 tonic = { workspace = true }
 uuid = { workspace = true }
 tracing = { workspace = true }
+serde = { workspace = true }
+
+[dev-dependencies]
+serde_json = { workspace = true }
