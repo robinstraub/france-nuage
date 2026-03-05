@@ -1,4 +1,4 @@
-import { expect, test } from "../base";
+import { test } from "../base";
 
 test.describe("Console / Organisations", () => {
 	test.beforeEach(async ({ actingAs }) => {
@@ -9,7 +9,7 @@ test.describe("Console / Organisations", () => {
 		pages,
 	}) => {
 		await pages.home.goto();
-		await expect(pages.onboarding.heading).toBeVisible();
+		await pages.onboarding.expectHeadingVisible();
 	});
 
 	test("creer une organisation depuis la page onboarding", async ({
@@ -17,9 +17,7 @@ test.describe("Console / Organisations", () => {
 	}) => {
 		await pages.onboarding.goto();
 		await pages.onboarding.createOrganization("Mon Organisation E2E");
-		await expect(
-			pages.home.page.getByText("Mes applications"),
-		).toBeVisible();
+		await pages.home.expectApplicationsVisible();
 	});
 
 	test("afficher le switcher d'organisations dans le header", async ({
@@ -27,8 +25,6 @@ test.describe("Console / Organisations", () => {
 	}) => {
 		await pages.onboarding.goto();
 		await pages.onboarding.createOrganization("Organisation Test");
-		await expect(
-			pages.home.page.getByText("Organisation Test"),
-		).toBeVisible();
+		await pages.home.expectOrganizationVisible("Organisation Test");
 	});
 });

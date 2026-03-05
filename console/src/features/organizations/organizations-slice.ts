@@ -34,12 +34,16 @@ interface OrganizationsState {
   items: Organization[];
   current: Organization | null;
   loading: boolean;
+  status: "idle" | "loading" | "succeeded" | "failed";
+  error: string | null;
 }
 
 const initialState: OrganizationsState = {
   items: [],
   current: null,
   loading: false,
+  status: "idle",
+  error: null,
 };
 
 const organizationsSlice = createSlice({
@@ -54,20 +58,31 @@ const organizationsSlice = createSlice({
     builder
       .addCase(fetchOrganizations.pending, (state) => {
         state.loading = true;
+        state.status = "loading";
+        state.error = null;
       })
       .addCase(fetchOrganizations.fulfilled, (state, action) => {
         state.items = action.payload;
         state.loading = false;
+        state.status = "succeeded";
         if (!state.current && action.payload.length > 0) {
           state.current = action.payload[0];
         }
       })
-      .addCase(fetchOrganizations.rejected, (state) => {
+      .addCase(fetchOrganizations.rejected, (state, action) => {
         state.loading = false;
+        state.status = "failed";
+        state.error =
+          action.error.message ?? "Erreur lors du chargement des organisations";
       })
       .addCase(createOrganization.fulfilled, (state, action) => {
         state.items.push(action.payload);
         state.current = action.payload;
+      })
+      .addCase(createOrganization.rejected, (state, action) => {
+        state.error =
+          action.error.message ??
+          "Erreur lors de la création de l'organisation";
       });
   },
 });

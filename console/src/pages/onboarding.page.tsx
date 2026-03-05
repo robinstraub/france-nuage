@@ -14,6 +14,7 @@ export function OnboardingPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (loading) return;
     if (!name.trim()) {
       setError("Le nom de l'organisation est requis");
       return;
@@ -44,6 +45,7 @@ export function OnboardingPage() {
             placeholder="Nom de l'organisation"
             value={name}
             onChange={(e) => setName(e.target.value)}
+            disabled={loading}
             mb={4}
           />
           {error && (
@@ -51,7 +53,7 @@ export function OnboardingPage() {
               {error}
             </Text>
           )}
-          <Button type="submit" w="full" loading={loading}>
+          <Button type="submit" w="full" loading={loading} disabled={loading}>
             Créer l'organisation
           </Button>
         </form>

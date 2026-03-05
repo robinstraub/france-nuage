@@ -41,8 +41,8 @@ impl ResourceManagerService for ResourceManagerHandler {
         let user =
             authenticate(&request, &self.openid, self.user_repository.as_ref()).await?;
 
-        let name = request.into_inner().name;
-        if name.trim().is_empty() {
+        let name = request.into_inner().name.trim().to_string();
+        if name.is_empty() {
             return Err(controlplane_core::error::Error::InvalidArgument(
                 "name is required".into(),
             )
@@ -257,6 +257,23 @@ mod tests {
 
         assert!(response.is_err());
         assert_eq!(response.unwrap_err().code(), tonic::Code::InvalidArgument);
+    }
+
+    #[tokio::test]
+    async fn creer_une_organisation_avec_espaces_autour_du_nom() {
+        let (handler, token, _server) = setup_handler(Arc::new(MockOrganizationRepository)).await;
+        let request = authenticated_request(
+            &token,
+            CreateOrganizationRequest {
+                name: "  Mon Organisation  ".to_string(),
+            },
+        );
+
+        let response = handler.create_organization(request).await;
+
+        assert!(response.is_ok());
+        let org = response.unwrap().into_inner().organization.unwrap();
+        assert_eq!(org.name, "Mon Organisation");
     }
 
     #[tokio::test]

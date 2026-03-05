@@ -75,8 +75,8 @@ so that I can set up my workspace on France-nuage.
 
 - [ ] Task 7 : Implémentation infra-db — PgUserRepository + PgOrganizationRepository (AC: #1, #2, #5, #6)
   - [ ] Initialiser le crate infra-db : ajouter dépendances sqlx, domain, core dans Cargo.toml
-  - [ ] Créer `controlplane/crates/infra-db/src/users.rs` — impl UserRepository for PgUserRepository (find_by_keycloak_id, create, find_or_create) avec sqlx
-  - [ ] Créer `controlplane/crates/infra-db/src/organizations.rs` — impl OrganizationRepository for PgOrganizationRepository
+  - [ ] Créer `controlplane/crates/infra-db/src/pg_user_repository.rs` — impl UserRepository for PgUserRepository (find_by_keycloak_id, create, find_or_create) avec sqlx
+  - [ ] Créer `controlplane/crates/infra-db/src/pg_organization_repository.rs` — impl OrganizationRepository for PgOrganizationRepository
   - [ ] `create()` : transaction SQL → INSERT organizations + INSERT organization_user
   - [ ] `list_by_user()` : SELECT organizations JOIN organization_user WHERE user_id = $1
   - [ ] Utiliser sqlx avec les types UUID et DateTime<Utc>
@@ -254,7 +254,7 @@ export const createOrganization = createAsyncThunk(
 - `controlplane/crates/domain/src/ports/organization_repository.rs`
 - `controlplane/crates/server/src/handlers/mod.rs`
 - `controlplane/crates/server/src/handlers/resource_manager.rs`
-- `controlplane/crates/infra-db/src/organizations.rs`
+- `controlplane/crates/infra-db/src/pg_organization_repository.rs`
 
 **Frontend :**
 - `console/src/features/organizations.slice.ts`

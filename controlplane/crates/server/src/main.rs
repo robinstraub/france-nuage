@@ -5,7 +5,8 @@ use server::handlers::resource_manager::ResourceManagerHandler;
 use server::proto::resource_manager_service_server::ResourceManagerServiceServer;
 use tonic::transport::Server;
 use tonic_web::GrpcWebLayer;
-use tower_http::cors::{Any, CorsLayer};
+use http::HeaderValue;
+use tower_http::cors::{AllowOrigin, Any, CorsLayer};
 use tracing_subscriber::EnvFilter;
 
 #[tokio::main]
@@ -33,11 +34,24 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let resource_manager =
         ResourceManagerHandler::new(openid, user_repository, organization_repository);
 
-    let cors = CorsLayer::new()
-        .allow_origin(Any)
-        .allow_headers(Any)
-        .allow_methods(Any)
-        .expose_headers(Any);
+    let cors_origins = std::env::var("CORS_ALLOWED_ORIGINS").unwrap_or_else(|_| "*".into());
+    let cors = if cors_origins == "*" {
+        CorsLayer::new()
+            .allow_origin(Any)
+            .allow_headers(Any)
+            .allow_methods(Any)
+            .expose_headers(Any)
+    } else {
+        let origins: Vec<HeaderValue> = cors_origins
+            .split(',')
+            .filter_map(|o| o.trim().parse().ok())
+            .collect();
+        CorsLayer::new()
+            .allow_origin(AllowOrigin::list(origins))
+            .allow_headers(Any)
+            .allow_methods(Any)
+            .expose_headers(Any)
+    };
 
     let addr = listen_addr.parse()?;
     tracing::info!("france-nuage control plane listening on {addr}");

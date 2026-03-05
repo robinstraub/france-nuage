@@ -498,7 +498,6 @@ dependencies = [
  "async-trait",
  "chrono",
  "controlplane-core",
- "sqlx",
  "uuid",
 ]
 
@@ -2602,6 +2601,7 @@ dependencies = [
  "chrono",
  "controlplane-core",
  "domain",
+ "http",
  "infra-db",
  "infra-kube",
  "infra-spicedb",

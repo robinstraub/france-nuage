@@ -1,4 +1,4 @@
-import type { Locator } from "@playwright/test";
+import { expect, type Locator } from "@playwright/test";
 import { BasePage } from "./base.page";
 
 export class OnboardingPage extends BasePage {
@@ -25,5 +25,9 @@ export class OnboardingPage extends BasePage {
 	async createOrganization(name: string) {
 		await this.nameInput.fill(name);
 		await this.submitButton.click();
+	}
+
+	async expectHeadingVisible() {
+		await expect(this.heading).toBeVisible();
 	}
 }
