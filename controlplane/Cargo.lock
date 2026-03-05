@@ -1234,6 +1234,7 @@ dependencies = [
 name = "infra-db"
 version = "0.1.0"
 dependencies = [
+ "async-trait",
  "chrono",
  "controlplane-core",
  "domain",
@@ -2600,6 +2601,7 @@ dependencies = [
  "chrono",
  "controlplane-core",
  "domain",
+ "http",
  "infra-db",
  "infra-kube",
  "infra-spicedb",
@@ -2613,9 +2615,13 @@ dependencies = [
  "rsa",
  "serde",
  "serde_json",
+ "sqlx",
  "tokio",
  "tonic",
+ "tonic-prost",
  "tonic-prost-build",
+ "tonic-web",
+ "tower-http",
  "tracing",
  "tracing-subscriber",
  "uuid",
@@ -3256,6 +3262,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "tonic-prost"
+version = "0.14.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a55376a0bbaa4975a3f10d009ad763d8f4108f067c7c2e74f3001fb49778d309"
+dependencies = [
+ "bytes",
+ "prost",
+ "tonic",
+]
+
+[[package]]
 name = "tonic-prost-build"
 version = "0.14.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3269,6 +3286,24 @@ dependencies = [
  "syn",
  "tempfile",
  "tonic-build",
+]
+
+[[package]]
+name = "tonic-web"
+version = "0.14.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "29453d84de05f4f1b573db22e6f9f6c95c189a6089a440c9a098aa9dea009299"
+dependencies = [
+ "base64",
+ "bytes",
+ "http",
+ "http-body",
+ "pin-project",
+ "tokio-stream",
+ "tonic",
+ "tower-layer",
+ "tower-service",
+ "tracing",
 ]
 
 [[package]]

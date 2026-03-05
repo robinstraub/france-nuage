@@ -1,7 +1,7 @@
 pub mod openid;
 
 #[cfg(test)]
-mod mock;
+pub(crate) mod mock;
 
 use controlplane_core::error::Error;
 use domain::entities::User;

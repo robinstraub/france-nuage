@@ -3,8 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
-    "codegen": "protoc --ts_out src/generated/rpc --ts_opt long_type_number --proto_path ../protocol ../protocol/france_nuage/resourcemanager/v1/resourcemanager.proto",
+    "codegen": "protoc --ts_out src/generated/rpc --ts_opt long_type_number --proto_path /protocol /protocol/france_nuage/resourcemanager/v1/resourcemanager.proto",
     "build": "tsc"
   },
   "dependencies": {

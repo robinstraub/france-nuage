@@ -1,6 +1,7 @@
 import { test as base } from "@playwright/test";
 import { HomePage } from "./pages/home.page";
 import { LoginPage } from "./pages/login.page";
+import { OnboardingPage } from "./pages/onboarding.page";
 
 const KEYCLOAK_URL = process.env.KEYCLOAK_URL || "https://keycloak.localhost";
 const OIDC_CLIENT_ID = "e2e-tests";
@@ -57,6 +58,7 @@ class KeycloakApi {
 type Pages = {
 	home: HomePage;
 	login: LoginPage;
+	onboarding: OnboardingPage;
 };
 
 type WorkerFixtures = {
@@ -83,6 +85,7 @@ export const test = base.extend<TestFixtures, WorkerFixtures>({
 		await use({
 			home: new HomePage(page),
 			login: new LoginPage(page),
+			onboarding: new OnboardingPage(page),
 		});
 	},
 

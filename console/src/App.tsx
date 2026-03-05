@@ -3,6 +3,7 @@ import { AppLayout } from "./components/app-layout";
 import { PageGuard } from "./components/page-guard";
 import { CallbackPage } from "./pages/callback.page";
 import { HomePage } from "./pages/home.page";
+import { OnboardingPage } from "./pages/onboarding.page";
 
 const basename = import.meta.env.BASE_URL.replace(/\/+$/, "") || undefined;
 
@@ -15,6 +16,10 @@ const router = createBrowserRouter(
     {
       element: <PageGuard />,
       children: [
+        {
+          path: "/onboarding",
+          element: <OnboardingPage />,
+        },
         {
           element: <AppLayout />,
           children: [

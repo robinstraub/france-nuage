@@ -12,8 +12,10 @@ test.describe("Story 1.3 : Shell de la console et authentification frontend", ()
 	});
 
 	test.describe("utilisateur authentifié", () => {
-		test.beforeEach(async ({ actingAs }) => {
+		test.beforeEach(async ({ actingAs, pages }) => {
 			await actingAs();
+			await pages.onboarding.goto();
+			await pages.onboarding.createOrganization("Test Org");
 		});
 
 		test("un utilisateur authentifié voit le shell de la console", async ({

@@ -7,6 +7,14 @@ message Organization {
   string name = 2;
 }
 
+message CreateOrganizationRequest {
+  string name = 1;
+}
+
+message CreateOrganizationResponse {
+  Organization organization = 1;
+}
+
 message ListOrganizationsRequest {}
 
 message ListOrganizationsResponse {
@@ -14,5 +22,6 @@ message ListOrganizationsResponse {
 }
 
 service ResourceManagerService {
+  rpc CreateOrganization(CreateOrganizationRequest) returns (CreateOrganizationResponse);
   rpc ListOrganizations(ListOrganizationsRequest) returns (ListOrganizationsResponse);
 }

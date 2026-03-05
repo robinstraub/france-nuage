@@ -1,4 +1,4 @@
-import type { Locator } from "@playwright/test";
+import { expect, type Locator } from "@playwright/test";
 import { BasePage } from "./base.page";
 
 export class HomePage extends BasePage {
@@ -20,5 +20,13 @@ export class HomePage extends BasePage {
 
 	async goto() {
 		await super.goto("/");
+	}
+
+	async expectApplicationsVisible() {
+		await expect(this.page.getByText("Mes applications")).toBeVisible();
+	}
+
+	async expectOrganizationVisible(name: string) {
+		await expect(this.page.getByText(name)).toBeVisible();
 	}
 }

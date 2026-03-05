@@ -1,6 +1,7 @@
 import { Avatar, Box, Button, Flex, Text } from "@chakra-ui/react";
 import type { User } from "oidc-client-ts";
 import { userManager } from "../auth/user-manager";
+import { OrganizationSwitcher } from "./organization-switcher";
 
 interface AppHeaderProps {
   user: User;
@@ -36,6 +37,7 @@ export function AppHeader({ user, onToggleSidebar }: AppHeaderProps) {
           <Text fontSize="lg" fontWeight="bold">
             France-nuage
           </Text>
+          <OrganizationSwitcher />
         </Flex>
         <Flex align="center" gap={3}>
           <Text
