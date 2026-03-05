@@ -83,7 +83,7 @@ services:
       SPICEDB_URL: http://spicedb:50051
       SPICEDB_PRESHARED_KEY: ${SPICEDB_PRESHARED_KEY:-francenuage}
       STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-sk_test_placeholder}
-      OIDC_ISSUER_URL: https://keycloak.localhost/realms/france-nuage
+      OIDC_ISSUER_URL: http://keycloak:8080/realms/france-nuage
       RUST_LOG: ${RUST_LOG:-info}
       RUST_BACKTRACE: 1
       SQLX_OFFLINE: "true"
@@ -92,6 +92,8 @@ services:
       - ./protocol:/app/protocol
     depends_on:
       postgres:
+        condition: service_healthy
+      keycloak:
         condition: service_healthy
       spicedb:
         condition: service_started
