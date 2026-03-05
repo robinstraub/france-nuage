@@ -9,8 +9,8 @@ COPY ./node-sdk .
 RUN npm run build
 
 WORKDIR /app
-COPY ./console/package.json ./console/package-lock.json ./
-RUN npm ci
+COPY ./console/package.json ./
+RUN npm install
 COPY ./console .
 
 FROM base AS development

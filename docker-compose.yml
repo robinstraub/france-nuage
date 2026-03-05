@@ -103,6 +103,15 @@ services:
       - traefik.http.services.controlplane.loadbalancer.server.port=50052
       - traefik.http.services.controlplane.loadbalancer.server.scheme=h2c
 
+  node-sdk:
+    build:
+      context: .
+      dockerfile: node-sdk/Dockerfile
+    volumes:
+      - ./node-sdk:/app
+      - ./protocol:/protocol
+      - /app/node_modules
+
   console:
     build:
       context: .

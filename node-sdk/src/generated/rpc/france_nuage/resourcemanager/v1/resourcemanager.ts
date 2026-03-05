@@ -25,6 +25,24 @@ export interface Organization {
     name: string;
 }
 /**
+ * @generated from protobuf message france_nuage.resourcemanager.v1.CreateOrganizationRequest
+ */
+export interface CreateOrganizationRequest {
+    /**
+     * @generated from protobuf field: string name = 1
+     */
+    name: string;
+}
+/**
+ * @generated from protobuf message france_nuage.resourcemanager.v1.CreateOrganizationResponse
+ */
+export interface CreateOrganizationResponse {
+    /**
+     * @generated from protobuf field: france_nuage.resourcemanager.v1.Organization organization = 1
+     */
+    organization?: Organization;
+}
+/**
  * @generated from protobuf message france_nuage.resourcemanager.v1.ListOrganizationsRequest
  */
 export interface ListOrganizationsRequest {
@@ -93,6 +111,99 @@ class Organization$Type extends MessageType<Organization> {
  * @generated MessageType for protobuf message france_nuage.resourcemanager.v1.Organization
  */
 export const Organization = new Organization$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class CreateOrganizationRequest$Type extends MessageType<CreateOrganizationRequest> {
+    constructor() {
+        super("france_nuage.resourcemanager.v1.CreateOrganizationRequest", [
+            { no: 1, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<CreateOrganizationRequest>): CreateOrganizationRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.name = "";
+        if (value !== undefined)
+            reflectionMergePartial<CreateOrganizationRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CreateOrganizationRequest): CreateOrganizationRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string name */ 1:
+                    message.name = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: CreateOrganizationRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string name = 1; */
+        if (message.name !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.name);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message france_nuage.resourcemanager.v1.CreateOrganizationRequest
+ */
+export const CreateOrganizationRequest = new CreateOrganizationRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class CreateOrganizationResponse$Type extends MessageType<CreateOrganizationResponse> {
+    constructor() {
+        super("france_nuage.resourcemanager.v1.CreateOrganizationResponse", [
+            { no: 1, name: "organization", kind: "message", T: () => Organization }
+        ]);
+    }
+    create(value?: PartialMessage<CreateOrganizationResponse>): CreateOrganizationResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<CreateOrganizationResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CreateOrganizationResponse): CreateOrganizationResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* france_nuage.resourcemanager.v1.Organization organization */ 1:
+                    message.organization = Organization.internalBinaryRead(reader, reader.uint32(), options, message.organization);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: CreateOrganizationResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* france_nuage.resourcemanager.v1.Organization organization = 1; */
+        if (message.organization)
+            Organization.internalBinaryWrite(message.organization, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message france_nuage.resourcemanager.v1.CreateOrganizationResponse
+ */
+export const CreateOrganizationResponse = new CreateOrganizationResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class ListOrganizationsRequest$Type extends MessageType<ListOrganizationsRequest> {
     constructor() {
@@ -182,5 +293,6 @@ export const ListOrganizationsResponse = new ListOrganizationsResponse$Type();
  * @generated ServiceType for protobuf service france_nuage.resourcemanager.v1.ResourceManagerService
  */
 export const ResourceManagerService = new ServiceType("france_nuage.resourcemanager.v1.ResourceManagerService", [
+    { name: "CreateOrganization", options: {}, I: CreateOrganizationRequest, O: CreateOrganizationResponse },
     { name: "ListOrganizations", options: {}, I: ListOrganizationsRequest, O: ListOrganizationsResponse }
 ]);

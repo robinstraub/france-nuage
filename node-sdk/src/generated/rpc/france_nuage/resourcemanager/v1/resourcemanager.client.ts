@@ -4,15 +4,21 @@
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { ResourceManagerService } from "./resourcemanager";
-import { stackIntercept } from "@protobuf-ts/runtime-rpc";
 import type { ListOrganizationsResponse } from "./resourcemanager";
 import type { ListOrganizationsRequest } from "./resourcemanager";
+import { stackIntercept } from "@protobuf-ts/runtime-rpc";
+import type { CreateOrganizationResponse } from "./resourcemanager";
+import type { CreateOrganizationRequest } from "./resourcemanager";
 import type { UnaryCall } from "@protobuf-ts/runtime-rpc";
 import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
 /**
  * @generated from protobuf service france_nuage.resourcemanager.v1.ResourceManagerService
  */
 export interface IResourceManagerServiceClient {
+    /**
+     * @generated from protobuf rpc: CreateOrganization
+     */
+    createOrganization(input: CreateOrganizationRequest, options?: RpcOptions): UnaryCall<CreateOrganizationRequest, CreateOrganizationResponse>;
     /**
      * @generated from protobuf rpc: ListOrganizations
      */
@@ -28,10 +34,17 @@ export class ResourceManagerServiceClient implements IResourceManagerServiceClie
     constructor(private readonly _transport: RpcTransport) {
     }
     /**
+     * @generated from protobuf rpc: CreateOrganization
+     */
+    createOrganization(input: CreateOrganizationRequest, options?: RpcOptions): UnaryCall<CreateOrganizationRequest, CreateOrganizationResponse> {
+        const method = this.methods[0], opt = this._transport.mergeOptions(options);
+        return stackIntercept<CreateOrganizationRequest, CreateOrganizationResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
      * @generated from protobuf rpc: ListOrganizations
      */
     listOrganizations(input: ListOrganizationsRequest, options?: RpcOptions): UnaryCall<ListOrganizationsRequest, ListOrganizationsResponse> {
-        const method = this.methods[0], opt = this._transport.mergeOptions(options);
+        const method = this.methods[1], opt = this._transport.mergeOptions(options);
         return stackIntercept<ListOrganizationsRequest, ListOrganizationsResponse>("unary", this._transport, method, opt, input);
     }
 }
