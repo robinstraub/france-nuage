@@ -1,4 +1,3 @@
-import { Text } from "@chakra-ui/react";
 import type { User } from "oidc-client-ts";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -10,7 +9,7 @@ import type { AppDispatch, RootState } from "../store";
 export function PageGuard() {
   const [user, setUser] = useState<User | null | undefined>(undefined);
   const dispatch = useDispatch<AppDispatch>();
-  const { items, status, error } = useSelector(
+  const { items, status } = useSelector(
     (state: RootState) => state.organizations,
   );
   const navigate = useNavigate();
@@ -35,23 +34,17 @@ export function PageGuard() {
   }, [dispatch]);
 
   useEffect(() => {
-    if (!user || status !== "succeeded") return;
+    if (!user || status === "idle" || status === "loading") return;
 
-    if (items.length === 0 && location.pathname !== "/onboarding") {
+    if (location.pathname === "/onboarding") return;
+
+    if (status === "failed" || items.length === 0) {
       navigate("/onboarding", { replace: true });
     }
   }, [user, items, status, location.pathname, navigate]);
 
   if (!user) {
     return null;
-  }
-
-  if (status === "failed") {
-    return (
-      <Text color="red.500" p={8}>
-        {error ?? "Erreur lors du chargement des organisations"}
-      </Text>
-    );
   }
 
   return <Outlet context={user} />;
