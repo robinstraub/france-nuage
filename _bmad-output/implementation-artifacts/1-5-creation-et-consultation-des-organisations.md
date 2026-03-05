@@ -278,7 +278,7 @@ export const createOrganization = createAsyncThunk(
 - `controlplane/crates/server/src/main.rs` — brancher le service gRPC
 - `controlplane/crates/server/Cargo.toml` — dépendances si nécessaire
 - `controlplane/crates/infra-db/Cargo.toml` — ajouter dépendance sqlx
-- `controlplane/crates/infra-db/src/lib.rs` — ajouter mod organizations
+- `controlplane/crates/infra-db/src/lib.rs` — ajouter mod pg_organization_repository
 
 **Frontend :**
 - `console/src/store.ts` — enregistrer organizations slice
